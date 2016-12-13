@@ -3,6 +3,7 @@
 
 package com.sut.jo.web;
 
+import com.sut.jo.domain.Eiei;
 import com.sut.jo.domain.Good;
 import com.sut.jo.domain.Pond1;
 import com.sut.jo.web.ApplicationConversionServiceFactoryBean;
@@ -13,6 +14,30 @@ import org.springframework.format.FormatterRegistry;
 privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService {
     
     declare @type: ApplicationConversionServiceFactoryBean: @Configurable;
+    
+    public Converter<Eiei, String> ApplicationConversionServiceFactoryBean.getEieiToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<com.sut.jo.domain.Eiei, java.lang.String>() {
+            public String convert(Eiei eiei) {
+                return "(no displayable fields)";
+            }
+        };
+    }
+    
+    public Converter<Long, Eiei> ApplicationConversionServiceFactoryBean.getIdToEieiConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.sut.jo.domain.Eiei>() {
+            public com.sut.jo.domain.Eiei convert(java.lang.Long id) {
+                return Eiei.findEiei(id);
+            }
+        };
+    }
+    
+    public Converter<String, Eiei> ApplicationConversionServiceFactoryBean.getStringToEieiConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.sut.jo.domain.Eiei>() {
+            public com.sut.jo.domain.Eiei convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), Eiei.class);
+            }
+        };
+    }
     
     public Converter<Good, String> ApplicationConversionServiceFactoryBean.getGoodToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.sut.jo.domain.Good, java.lang.String>() {
@@ -63,6 +88,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     }
     
     public void ApplicationConversionServiceFactoryBean.installLabelConverters(FormatterRegistry registry) {
+        registry.addConverter(getEieiToStringConverter());
+        registry.addConverter(getIdToEieiConverter());
+        registry.addConverter(getStringToEieiConverter());
         registry.addConverter(getGoodToStringConverter());
         registry.addConverter(getIdToGoodConverter());
         registry.addConverter(getStringToGoodConverter());
