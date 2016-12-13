@@ -4,6 +4,7 @@
 package com.sut.jo.web;
 
 import com.sut.jo.domain.Good;
+import com.sut.jo.domain.Pond1;
 import com.sut.jo.web.ApplicationConversionServiceFactoryBean;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.core.convert.converter.Converter;
@@ -37,10 +38,37 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         };
     }
     
+    public Converter<Pond1, String> ApplicationConversionServiceFactoryBean.getPond1ToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<com.sut.jo.domain.Pond1, java.lang.String>() {
+            public String convert(Pond1 pond1) {
+                return "(no displayable fields)";
+            }
+        };
+    }
+    
+    public Converter<Long, Pond1> ApplicationConversionServiceFactoryBean.getIdToPond1Converter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.sut.jo.domain.Pond1>() {
+            public com.sut.jo.domain.Pond1 convert(java.lang.Long id) {
+                return Pond1.findPond1(id);
+            }
+        };
+    }
+    
+    public Converter<String, Pond1> ApplicationConversionServiceFactoryBean.getStringToPond1Converter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.sut.jo.domain.Pond1>() {
+            public com.sut.jo.domain.Pond1 convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), Pond1.class);
+            }
+        };
+    }
+    
     public void ApplicationConversionServiceFactoryBean.installLabelConverters(FormatterRegistry registry) {
         registry.addConverter(getGoodToStringConverter());
         registry.addConverter(getIdToGoodConverter());
         registry.addConverter(getStringToGoodConverter());
+        registry.addConverter(getPond1ToStringConverter());
+        registry.addConverter(getIdToPond1Converter());
+        registry.addConverter(getStringToPond1Converter());
     }
     
     public void ApplicationConversionServiceFactoryBean.afterPropertiesSet() {
