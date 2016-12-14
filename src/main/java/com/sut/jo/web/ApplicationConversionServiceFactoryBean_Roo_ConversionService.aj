@@ -3,6 +3,7 @@
 
 package com.sut.jo.web;
 
+import com.sut.jo.domain.Boss;
 import com.sut.jo.domain.Eiei;
 import com.sut.jo.domain.Good;
 import com.sut.jo.domain.Jojo;
@@ -15,6 +16,30 @@ import org.springframework.format.FormatterRegistry;
 privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService {
     
     declare @type: ApplicationConversionServiceFactoryBean: @Configurable;
+    
+    public Converter<Boss, String> ApplicationConversionServiceFactoryBean.getBossToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<com.sut.jo.domain.Boss, java.lang.String>() {
+            public String convert(Boss boss) {
+                return "(no displayable fields)";
+            }
+        };
+    }
+    
+    public Converter<Long, Boss> ApplicationConversionServiceFactoryBean.getIdToBossConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.sut.jo.domain.Boss>() {
+            public com.sut.jo.domain.Boss convert(java.lang.Long id) {
+                return Boss.findBoss(id);
+            }
+        };
+    }
+    
+    public Converter<String, Boss> ApplicationConversionServiceFactoryBean.getStringToBossConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.sut.jo.domain.Boss>() {
+            public com.sut.jo.domain.Boss convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), Boss.class);
+            }
+        };
+    }
     
     public Converter<Eiei, String> ApplicationConversionServiceFactoryBean.getEieiToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.sut.jo.domain.Eiei, java.lang.String>() {
@@ -113,6 +138,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
     }
     
     public void ApplicationConversionServiceFactoryBean.installLabelConverters(FormatterRegistry registry) {
+        registry.addConverter(getBossToStringConverter());
+        registry.addConverter(getIdToBossConverter());
+        registry.addConverter(getStringToBossConverter());
         registry.addConverter(getEieiToStringConverter());
         registry.addConverter(getIdToEieiConverter());
         registry.addConverter(getStringToEieiConverter());
