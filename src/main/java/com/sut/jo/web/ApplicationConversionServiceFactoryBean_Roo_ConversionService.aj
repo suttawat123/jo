@@ -5,6 +5,7 @@ package com.sut.jo.web;
 
 import com.sut.jo.domain.Eiei;
 import com.sut.jo.domain.Good;
+import com.sut.jo.domain.Jojo;
 import com.sut.jo.domain.Pond1;
 import com.sut.jo.web.ApplicationConversionServiceFactoryBean;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -63,6 +64,30 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         };
     }
     
+    public Converter<Jojo, String> ApplicationConversionServiceFactoryBean.getJojoToStringConverter() {
+        return new org.springframework.core.convert.converter.Converter<com.sut.jo.domain.Jojo, java.lang.String>() {
+            public String convert(Jojo jojo) {
+                return "(no displayable fields)";
+            }
+        };
+    }
+    
+    public Converter<Long, Jojo> ApplicationConversionServiceFactoryBean.getIdToJojoConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.Long, com.sut.jo.domain.Jojo>() {
+            public com.sut.jo.domain.Jojo convert(java.lang.Long id) {
+                return Jojo.findJojo(id);
+            }
+        };
+    }
+    
+    public Converter<String, Jojo> ApplicationConversionServiceFactoryBean.getStringToJojoConverter() {
+        return new org.springframework.core.convert.converter.Converter<java.lang.String, com.sut.jo.domain.Jojo>() {
+            public com.sut.jo.domain.Jojo convert(String id) {
+                return getObject().convert(getObject().convert(id, Long.class), Jojo.class);
+            }
+        };
+    }
+    
     public Converter<Pond1, String> ApplicationConversionServiceFactoryBean.getPond1ToStringConverter() {
         return new org.springframework.core.convert.converter.Converter<com.sut.jo.domain.Pond1, java.lang.String>() {
             public String convert(Pond1 pond1) {
@@ -94,6 +119,9 @@ privileged aspect ApplicationConversionServiceFactoryBean_Roo_ConversionService 
         registry.addConverter(getGoodToStringConverter());
         registry.addConverter(getIdToGoodConverter());
         registry.addConverter(getStringToGoodConverter());
+        registry.addConverter(getJojoToStringConverter());
+        registry.addConverter(getIdToJojoConverter());
+        registry.addConverter(getStringToJojoConverter());
         registry.addConverter(getPond1ToStringConverter());
         registry.addConverter(getIdToPond1Converter());
         registry.addConverter(getStringToPond1Converter());
